@@ -5,14 +5,13 @@ import "../css/mainPage.css";
 import "../css/connectPage.css";
 import { Button } from "react-bootstrap";
 
-const BROADCAST = (_ip: string, msg: string, resultFunc: Function, errFunc: Function) => {
-  axios
+const BROADCAST = async (_ip: string, msg: string, resultFunc: Function, errFunc: Function) => {
+  await axios
   .get(`http://${_ip}:42001/broadcast=${msg}`, { timeout: 3000 })
   .then((res) => {
     resultFunc();
   })
   .catch((err) => {
-    console.log(err);
     errFunc();
   });
 }
@@ -20,8 +19,8 @@ const BROADCAST = (_ip: string, msg: string, resultFunc: Function, errFunc: Func
 const SENSOR = (_ip: string, name: string, value: any, resultFunc: Function, errFunc: Function) =>
   `http://${_ip}:42001/sensor-update=${name}=${value}`;
 
-const VALUE = (_ip: string, name: string, value: any, resultFunc: Function, errFunc: Function) => {
-  axios
+const VALUE = async (_ip: string, name: string, value: any, resultFunc: Function, errFunc: Function) => {
+  await axios
   .get(`http://${_ip}:42001/vars-update=${name}=${value}`, { timeout: 3000 })
   .then((res) => {
     resultFunc();
@@ -105,6 +104,7 @@ function Main() {
   function MainPage() {
     const [power, setPower] = useState(false);
     const [sendDone, setSendDone] = useState(false);
+    const [error, setError] = useState(false);
     const msgRef = useRef<any>();
     const varNameRef = useRef<any>();
     const varValueRef = useRef<any>();
@@ -118,15 +118,21 @@ function Main() {
 
     const OnClickBroadCast = () => {
       BROADCAST(ip, msgRef.current.value, SendDone, () => {
-        setIsConnected(false);
-        setIp("127.0.0.1");
+        setError(true);
+        setTimeout(() => {
+          setIsConnected(false);
+          setIp("127.0.0.1");
+        }, 3000);
       });
     }
 
     const OnClickVarChange = () => {
       VALUE(ip, varNameRef.current.value, varNameRef.current.value, SendDone, () => {
-        setIsConnected(false);
-        setIp("127.0.0.1");
+        setError(true);
+        setTimeout(() => {
+          setIsConnected(false);
+          setIp("127.0.0.1");
+        }, 3000);
       });
     }
 
@@ -134,26 +140,38 @@ function Main() {
       switch(e.currentTarget.id) {
         case "up-triangle":
           BROADCAST(ip, "up", SendDone, () => {
-            setIsConnected(false);
-            setIp("127.0.0.1");
+            setError(true);
+            setTimeout(() => {
+              setIsConnected(false);
+              setIp("127.0.0.1");
+            }, 3000);
           });
           break;
         case "down-triangle":
           BROADCAST(ip, "down", SendDone, () => {
-            setIsConnected(false);
-            setIp("127.0.0.1");
+            setError(true);
+            setTimeout(() => {
+              setIsConnected(false);
+              setIp("127.0.0.1");
+            }, 3000);
           });
           break;
         case "left-triangle":
           BROADCAST(ip, "left", SendDone, () => {
-            setIsConnected(false);
-            setIp("127.0.0.1");
+            setError(true);
+            setTimeout(() => {
+              setIsConnected(false);
+              setIp("127.0.0.1");
+            }, 3000);
           });
           break;
         case "right-triangle":
           BROADCAST(ip, "right", SendDone, () => {
-            setIsConnected(false);
-            setIp("127.0.0.1");
+            setError(true);
+            setTimeout(() => {
+              setIsConnected(false);
+              setIp("127.0.0.1");
+            }, 3000);
           });
           break;
       }
@@ -163,14 +181,20 @@ function Main() {
       if(power) {
         setPower(false);
         BROADCAST(ip, "poweroff", SendDone, () => {
-          setIsConnected(false);
-          setIp("127.0.0.1");
+          setError(true);
+          setTimeout(() => {
+            setIsConnected(false);
+            setIp("127.0.0.1");
+          }, 3000);
         });
       } else {
         setPower(true);
         BROADCAST(ip, "poweron", SendDone, () => {
-          setIsConnected(false);
-          setIp("127.0.0.1");
+          setError(true);
+          setTimeout(() => {
+            setIsConnected(false);
+            setIp("127.0.0.1");
+          }, 3000);
         });
       }
     };
@@ -212,7 +236,8 @@ function Main() {
           <div className="power-on-btn" onClick={OnClickPower}></div>
           <div className="power-off-btn" onClick={OnClickPower}></div>
         </div>
-        { sendDone ? <p className="sendDoneMsg">전송 완료</p> : sendDone }
+        { sendDone ? <p className="sendDoneMsg">전송 완료</p> : null }
+        { error ? <p className="sendErrorMsg">연결이 끊어졌습니다....</p> : null }
       </div>
     );
   }

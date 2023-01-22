@@ -40,8 +40,9 @@ function Main() {
       }
 
       axios
-        .get(BROADCAST(ipAddress.current.value, ""), { timeout: 3000 })
+        .get(BROADCAST(ipAddress.current.value, ""), { timeout: 5000 })
         .then((res) => {
+          console.log(res.data);
           if (res.status === 200) {
             ConnectDone(ipAddress.current.value);
           } else {
@@ -50,7 +51,8 @@ function Main() {
             ConnectDone(ipAddress.current.value);
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           setConnecting(false);
           setError(true);
         });

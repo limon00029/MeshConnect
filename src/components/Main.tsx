@@ -40,7 +40,7 @@ function Main() {
       }
 
       axios
-        .get(BROADCAST(ipAddress.current.value, ""), { timeout: 5000 })
+        .get(BROADCAST(ipAddress.current.value, ""))
         .then((res) => {
           console.log(res.data);
           if (res.status === 200) {

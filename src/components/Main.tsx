@@ -30,7 +30,8 @@ function Main() {
       setConnecting(true);
       setError(false);
 
-      const regex = /[0-9].[0-9].[0-9].[0-9]/;
+      const regex = /\d{1,}.\d{1,}.\d{1,}.\d{1,}/;
+      console.log(regex.test(ipAddress.current.value));
 
       if (!regex.test(ipAddress.current.value)) {
         setConnecting(false);

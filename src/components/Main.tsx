@@ -5,12 +5,32 @@ import "../css/mainPage.css";
 import "../css/connectPage.css";
 import { Button } from "react-bootstrap";
 
-const BROADCAST = (_ip: string, msg: string) =>
-  `http://${_ip}:42001/broadcast=${msg}`;
-const SENSOR = (_ip: string, name: string, value: any) =>
+const BROADCAST = (_ip: string, msg: string, resultFunc: Function, errFunc: Function) => {
+  axios
+  .get(`http://${_ip}:42001/broadcast=${msg}`, { timeout: 3000 })
+  .then((res) => {
+    resultFunc();
+  })
+  .catch((err) => {
+    console.log(err);
+    errFunc();
+  });
+}
+
+const SENSOR = (_ip: string, name: string, value: any, resultFunc: Function, errFunc: Function) =>
   `http://${_ip}:42001/sensor-update=${name}=${value}`;
-const VALUE = (_ip: string, name: string, value: any) =>
-  `http://${_ip}:42001/vars-update=${name}=${value}`;
+
+const VALUE = (_ip: string, name: string, value: any, resultFunc: Function, errFunc: Function) => {
+  axios
+  .get(`http://${_ip}:42001/vars-update=${name}=${value}`, { timeout: 3000 })
+  .then((res) => {
+    resultFunc();
+  })
+  .catch((err) => {
+    console.log(err);
+    errFunc();
+  });
+}
 
 function Main() {
   const [ip, setIp] = useState("127.0.0.1");
@@ -31,31 +51,27 @@ function Main() {
       setError(false);
 
       const regex = /\d{1,}.\d{1,}.\d{1,}.\d{1,}/;
-      console.log(regex.test(ipAddress.current.value));
 
       if (!regex.test(ipAddress.current.value)) {
         setConnecting(false);
         setError(true);
         return;
       }
-
-      axios
-        .get(BROADCAST(ipAddress.current.value, ""))
-        .then((res) => {
-          console.log(res.data);
-          if (res.status === 200) {
-            ConnectDone(ipAddress.current.value);
+      BROADCAST(ipAddress.current.value, "",
+        (status: number) => {
+          if (status === 200) {
+          ConnectDone(ipAddress.current.value);
           } else {
             setConnecting(false);
             setError(true);
             ConnectDone(ipAddress.current.value);
           }
-        })
-        .catch((err) => {
-          console.log(err);
+        },
+        () => {
           setConnecting(false);
           setError(true);
-        });
+        }
+      );
     }
 
     return (
@@ -88,45 +104,57 @@ function Main() {
 
   function MainPage() {
     const [power, setPower] = useState(false);
+    const [sendDone, setSendDone] = useState(false);
     const msgRef = useRef<any>();
     const varNameRef = useRef<any>();
     const varValueRef = useRef<any>();
 
+    const SendDone = () => {
+      setSendDone(true);
+      setTimeout(() => {
+        setSendDone(false);
+      }, 3000)
+    }
+
     const OnClickBroadCast = () => {
-      axios
-        .get(BROADCAST(ip, msgRef.current.value), { timeout: 3000 })
-        .then((res) => {
-          
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      BROADCAST(ip, msgRef.current.value, SendDone, () => {
+        setIsConnected(false);
+        setIp("127.0.0.1");
+      });
     }
 
     const OnClickVarChange = () => {
-      axios
-        .get(VALUE(ip, varNameRef.current.value, varNameRef.current.value), { timeout: 3000 })
-        .then((res) => {
-          
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      VALUE(ip, varNameRef.current.value, varNameRef.current.value, SendDone, () => {
+        setIsConnected(false);
+        setIp("127.0.0.1");
+      });
     }
 
     const SendDirect = (e : React.MouseEvent<HTMLDivElement>) => {
       switch(e.currentTarget.id) {
         case "up-triangle":
-          BROADCAST(ip, "up");
+          BROADCAST(ip, "up", SendDone, () => {
+            setIsConnected(false);
+            setIp("127.0.0.1");
+          });
           break;
         case "down-triangle":
-          BROADCAST(ip, "down");
+          BROADCAST(ip, "down", SendDone, () => {
+            setIsConnected(false);
+            setIp("127.0.0.1");
+          });
           break;
         case "left-triangle":
-          BROADCAST(ip, "left");
+          BROADCAST(ip, "left", SendDone, () => {
+            setIsConnected(false);
+            setIp("127.0.0.1");
+          });
           break;
         case "right-triangle":
-          BROADCAST(ip, "right");
+          BROADCAST(ip, "right", SendDone, () => {
+            setIsConnected(false);
+            setIp("127.0.0.1");
+          });
           break;
       }
     };
@@ -134,10 +162,16 @@ function Main() {
     const OnClickPower = () => {
       if(power) {
         setPower(false);
-        BROADCAST(ip, "poweroff");
+        BROADCAST(ip, "poweroff", SendDone, () => {
+          setIsConnected(false);
+          setIp("127.0.0.1");
+        });
       } else {
         setPower(true);
-        BROADCAST(ip, "poweron");
+        BROADCAST(ip, "poweron", SendDone, () => {
+          setIsConnected(false);
+          setIp("127.0.0.1");
+        });
       }
     };
 
@@ -178,6 +212,7 @@ function Main() {
           <div className="power-on-btn" onClick={OnClickPower}></div>
           <div className="power-off-btn" onClick={OnClickPower}></div>
         </div>
+        { sendDone ? <p className="sendDoneMsg">전송 완료</p> : sendDone }
       </div>
     );
   }

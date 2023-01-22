@@ -160,6 +160,10 @@ hr.solid {
   background-size: contain;
 }
 
+.sendDoneMsg {
+  font-size: 20px;
+}
+
 @media screen and (max-width: 400px) {
   #main-container {
     width: 350px;

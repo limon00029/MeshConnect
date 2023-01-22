@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.9bade576.css",
-    "main.js": "/static/js/main.7d6c0e8f.js",
-    "static/js/787.a5a809a5.chunk.js": "/static/js/787.a5a809a5.chunk.js",
-    "static/media/off.png": "/static/media/off.0357a628ed73b779ded0.png",
-    "static/media/on.png": "/static/media/on.56dc5ad1dbb62509fb1f.png",
-    "index.html": "/index.html",
-    "main.9bade576.css.map": "/static/css/main.9bade576.css.map",
-    "main.7d6c0e8f.js.map": "/static/js/main.7d6c0e8f.js.map",
-    "787.a5a809a5.chunk.js.map": "/static/js/787.a5a809a5.chunk.js.map"
+    "main.css": "/MeshConnect/static/css/main.2c0436e7.css",
+    "main.js": "/MeshConnect/static/js/main.4e28c44d.js",
+    "static/js/787.a5a809a5.chunk.js": "/MeshConnect/static/js/787.a5a809a5.chunk.js",
+    "static/media/off.png": "/MeshConnect/static/media/off.0357a628ed73b779ded0.png",
+    "static/media/on.png": "/MeshConnect/static/media/on.56dc5ad1dbb62509fb1f.png",
+    "index.html": "/MeshConnect/index.html",
+    "main.2c0436e7.css.map": "/MeshConnect/static/css/main.2c0436e7.css.map",
+    "main.4e28c44d.js.map": "/MeshConnect/static/js/main.4e28c44d.js.map",
+    "787.a5a809a5.chunk.js.map": "/MeshConnect/static/js/787.a5a809a5.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9bade576.css",
-    "static/js/main.7d6c0e8f.js"
+    "static/css/main.2c0436e7.css",
+    "static/js/main.4e28c44d.js"
   ]
 }
